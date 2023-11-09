@@ -1,69 +1,80 @@
-#include<LiquidCrystal.h>
-const int pinLM35 = 1;
-const int pinLEDR= 13;
-int val =0;
-int temperature = 0;
+#include <LiquidCrystal.h>
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
-float set = 25.0, cur;
+float set = 16.0, cur;
+const int pinLM35 = 1;
+const int LED = 13;
+
+int val = 0;
+
 byte degree[8]={
- B00110,
- B01001,
- B01001,
- B00110,
- B00000,
- B00000,
- B00000,
- B00000,
- };
+B00110,
+B01001,
+B01001,
+B00110,
+B00000,
+B00000,
+B00000,
+B00000,
+};
+
 byte fan_off[8]={
- B00100,
- B00100,
- B00100,
- B11111,
- B00100,
- B00100,
- B00100,
- B00000,
- };
+B00100,
+B00100,
+B00100,
+B11111,
+B00100,
+B00100,
+B00100,
+B00000,
+};
+
 byte fan_on[8]={
- B00100,
- B10101,
- B01110,
- B11111,
- B01110,
- B10101,
- B00100,
- B00000,
- };
- 
- void setup() {
- lcd.begin(16, 2);
- lcd.createChar(0, degree);
- lcd.createChar(1, fan_off);
- lcd.createChar(2, fan_on);
- lcd.setCursor(0, 0); lcd.print("Set:");
- lcd.setCursor(10, 0); lcd.write((byte)0);
- lcd.setCursor(11, 0); lcd.print("C");
- lcd.setCursor(0, 1); lcd.print("Cur:");
- lcd.setCursor(10, 1); lcd.write((byte)0);
- lcd.setCursor(11, 1); lcd.print("C");
- pinMode(pinLEDR, OUTPUT);
- }
- void loop() {
- val = analogRead(pinLM35);
+B00100,
+B10101,
+B01110,
+B11111,
+B01110,
+B10101,
+B00100,
+B00000,
+};
+
+void setup() {
+  pinMode(LED, OUTPUT);
+  lcd.begin(16, 2);
+  lcd.createChar(0, degree);
+  lcd.createChar(1, fan_off);
+  lcd.createChar(2, fan_on);
   
- temperature = val*5*100/1024.0;
- if(temperature>=28){
-    digitalWrite(pinLEDR,1);
-    }
-   else{
-    digitalWrite(pinLEDR,0);
-   }
- cur = set + (float)random(-50, 50) * .1;
- lcd.setCursor(6, 0); lcd.print(set, 1);
- lcd.setCursor(6, 1); lcd.print(cur, 1);   
-lcd.setCursor(15,1); 
-if(cur > set) lcd.write(2);
- else lcd.write(1);
- delay(2500);      
+  lcd.begin(16, 2);
+  lcd.setCursor(0, 0); lcd.print("Set:");
+  lcd.setCursor(10, 0); lcd.write((byte)0);
+  lcd.setCursor(11, 0); lcd.print("C");
+  lcd.setCursor(0, 1); lcd.print("Cur:");
+  lcd.setCursor(10, 1); lcd.write((byte)0);
+  lcd.setCursor(11, 1); lcd.print("C");
+
+   lcd.setCursor(6, 0); 
+  lcd.print(set, 1);
+  
+}
+
+void loop() {
+  val = analogRead(pinLM35);
+  cur = val * 5 * 100 /1024.0;
+ if(cur>1){
+  lcd.setCursor(6, 1); 
+  lcd.print(cur, 1);
+  lcd.setCursor(15,1);
+  if (cur > set) {
+    lcd.write(2);
+    digitalWrite(LED,HIGH);
+  }
+  else{
+    lcd.write(1);
+    digitalWrite(LED,LOW);
+  }
+  
+  delay(500); 
+ }
 }
